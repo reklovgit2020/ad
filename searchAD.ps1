@@ -1,5 +1,7 @@
-$windowsepochtimestamp = [datetime]::Now.ToFileTime()
-$search = [adsisearcher]"(&(ObjectCategory=Person)(ObjectClass=User)(cn=*admin*)(lastlogontimestamp<=$Windowsepochtimestamp))"
+$days = 100
+$windowsepochts = [datetime]::Now.ToFileTime()
+$comparedts =$windowsepochts-(86400000*days)
+$search = [adsisearcher]"(&(ObjectCategory=Person)(ObjectClass=User)(cn=*admin*)(lastlogontimestamp<=$comparedts))"
 $users = $search.FindAll()
 foreach($user in $users) {
     $CN = $user.Properties['CN']
