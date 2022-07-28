@@ -1,1 +1,2 @@
-w32tm.exe  /ntte 133021072923929818 <timestamp>
+Convert windows Epoche time to readable timestamp: w32tm.exe  /ntte 133021072923929818 <timestamp>
+Print current time in Windows epoche format: [datetime]::Now.ToFileTime()
