@@ -14,3 +14,4 @@ Tooling:
 Sources:
 - https://www.alkanesolutions.co.uk/2021/03/03/search-active-directory-using-adsisearcher-filters/
 - https://www.secuinfra.com/de/techtalk/adsisearcher-get-the-object-of-interest-suchen-nach-spezifischen-usern-und-computern/
+- https://learn.microsoft.com/en-us/dotnet/api/system.directoryservices.directorysearcher?view=dotnet-plat-ext-6.0
