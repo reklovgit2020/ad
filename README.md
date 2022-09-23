@@ -1,9 +1,12 @@
 # ad
 This is a respository for active directory related scripts.
 The idea is to have a toolkit to query ad for security related reasons:
+Prio 1
+- Show AD Group Members (DomainAdmin, Schema Admin etc.)
+- Show Group Membership of a users (based on certain attribute)
+
+Prio 2
 - Users not logged in since 90days
-- Show AD Group Members
-- Show Group Membership of a users
 - non human accounts locked out
 - etc.
 
