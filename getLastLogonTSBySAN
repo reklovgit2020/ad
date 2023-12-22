@@ -1,0 +1,46 @@
+# Prompt the user for the file path containing SAMAccountNames
+$filePath = Read-Host "Enter the path to the file containing SAMAccountNames"
+ 
+ 
+# Check if the file exists
+if (Test-Path $filePath -PathType Leaf) {
+
+ 
+# Read SAMAccountNames from the file
+$samAccountNames = Get-Content $filePath
+# Loop through each SAMAccountName and query Active Directory
+foreach ($samAccountName in $samAccountNames) {
+ 
+        try {
+ 
+            # Query Active Directory for the user
+            $ldap = "(&(ObjectCategory=Person)(ObjectClass=User)(sAMAccountName=" + $samAccountName + "))"
+            $search = [adsisearcher] $ldap
+            $user = $search.FindAll()
+
+            # Check if the user was found
+ 
+            if ($user) {
+ 
+                # Print out the lastLogonTimestamp for the user
+                $lastlogon=$($user.Properties["lastLogonTimestamp"])
+                $flastlogon = [datetime]::FromFileTime([int64][string]$lastlogon)
+                Write-Output "SAMAccountName: $samAccountName, LastLogonTimestamp: $flastlogon"
+ 
+            } else {
+ 
+                Write-Output "User with SAMAccountName '$samAccountName' not found."
+ 
+            }
+ 
+        } catch {
+ 
+            Write-Error "Error querying user with SAMAccountName '$samAccountName': $_"
+ 
+        }
+ 
+    }
+} else {
+ 
+    Write-Error "File not found at path: $filePath"
+}
