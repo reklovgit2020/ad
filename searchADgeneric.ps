@@ -1,0 +1,66 @@
+# used | Out-File -FilePath <file>
+  
+$days = 365
+$windowsepochts = [datetime]::Now.ToFileTime()
+ 
+# The value stored in the lastLogon attribute represents the date and time of the account logon, expressed in 100-nanosecond steps since 12:00 AM, January 1, 1601
+$comparedts =$windowsepochts-([int64]864000000000*$days)
+ 
+$ADS_UF_ACCOUNT_DISABLE = 2
+$ADS_UF_HOMEDIR_REQUIRED = 8
+$ADS_UF_LOCKOUT = 16
+$ADS_UF_PASSWD_NOTREQD = 32
+$ADS_UF_PASSWD_CANT_CHANGE = 64
+$ADS_UF_ENCRYPTED_TEXT_PASSWORD_ALLOWED = 128
+$ADS_UF_NORMAL_ACCOUNT = 512
+$ADS_UF_INTERDOMAIN_TRUST_ACCOUNT = 2048
+$ADS_UF_WORKSTATION_TRUST_ACCOUNT = 4096
+$ADS_UF_SERVER_TRUST_ACCOUNT = 8192
+$ADS_UF_DONT_EXPIRE_PASSWD = 65536
+$ADS_UF_MNS_LOGON_ACCOUNT = 131072
+$ADS_UF_SMARTCARD_REQUIRED = 262144
+$ADS_UF_TRUSTED_FOR_DELEGATION = 524288
+$ADS_UF_NOT_DELEGATED = 1048576
+$ADS_UF_USE_DES_KEY_ONLY = 2097152
+$ADS_UF_DONT_REQUIRE_PREAUTH = 4194304
+$ADS_UF_PASSWORD_EXPIRED = 8388608
+$ADS_UF_TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION = 16777216
+$ADS_UF_NO_AUTH_DATA_REQUIRED = 33554432
+$ADS_UF_PARTIAL_SECRETS_ACCOUNT = 67108864
+ 
+$ldap = "(&(ObjectCategory=Person)(ObjectClass=User)(cn=svc*)(cn=*mesap*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(lastlogontimestamp<=$comparedts))"
+            $search = [adsisearcher]::new([adsi]"LDAP://my.addomain/DC=contoso,DC=test,DC=com",$ldap)
+  #$search = [adsisearcher]::new([adsi]"LDAP://my.addomain/OU=lorem,OU=ipsum,DC=contoso,DC=net",$ldap)
+#Filter
+#(department=xxx*)
+ 
+#$search = [adsisearcher]"(&(ObjectCategory=Person)(ObjectClass=User)(cn=*gas*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(lastlogontimestamp<=$comparedts))"
+ 
+$users = $search.FindAll()
+    Write-Output "DN;CN;SamAccountName;DisplayName;Description;Department;Company;Manager;Employee ID;Employee Number;Last logon;UAC"
+ 
+foreach($user in $users) {
+    $DN = $user.Properties['distinguishedName']
+    $CN = $user.Properties['CN']
+    $DisplayName = $user.Properties['DisplayName']
+    $SamAccountName = $user.Properties['SamAccountName']
+	$groupMembership = $user.Properties['Membership']
+	$lastlogon = $user.Properties['lastlogontimestamp']
+    $uac = $user.Properties['useraccountcontrol']
+    $dep = $user.Properties['department']
+    $description = $user.Properties['description']
+    $manager = $user.Properties['manager']
+    $empID = $user.Properties['employeeID']
+    $empNumber = $user.Properties['employeeNumber']
+    $company = $user.Properties['company']
+	$flastlogon = [datetime]::FromFileTime([int64][string]$lastlogon).ToString("dd.MM.yyyy")
+    Write-Output "$DN;$CN;$SamAccountName;$DisplayName;$description;$department;$company;$manager;$empID;$empNumber;$flastlogon;$uac"	
+ 
+    #"CN is $CN"
+    #"Display Name is $DisplayName"
+    #"SamAccountName is $SamAccountName"
+	#"Last Logon was $flastlogon"
+    #"UAC $uac"
+}
+$total = $users.Count
+"Total: $total"
