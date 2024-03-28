@@ -1,4 +1,4 @@
-# ad
+# Active Directory
 This is a respository for active directory related scripts.
 The idea is to have a toolkit to query ad for security related reasons:
 
@@ -9,8 +9,11 @@ Prio 1
 Prio 2
 - Users not logged in since 90days
 - non human accounts locked out
-- etc.
+- get DNS data from ForestDNZZones container
 
+
+Ideas:
+- 
 
 Tooling:
 - https://learn.microsoft.com/en-us/sysinternals/downloads/adexplorer
