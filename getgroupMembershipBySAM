@@ -1,0 +1,22 @@
+$elements = Get-Content .\sam-accountnames.txt
+ 
+Write-Output "SAMAccountName;CN;ADSecurityGroupMembership"
+ 
+foreach($element in $elements) {
+$ldap = "(&(ObjectCategory=Person)(ObjectClass=User)(samAccountName=$element))"
+ 
+#Domain lorem
+$search = [adsisearcher]::new([adsi]"LDAP://lorem/DC=lorem,DC=net",$ldap)
+ 
+$users = $search.FindAll()
+ 
+foreach($user in $users) {
+    $DN = $user.Properties['distinguishedName']
+    $CN = $user.Properties['CN']
+    $SamAccountName = $user.Properties['SamAccountName']
+    $memberof = $user.Properties['memberOf']
+    foreach ($group in $memberof) {
+    Write-Output "$SamAccountName;$CN;$group"
+   }
+}
+}
