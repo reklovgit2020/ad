@@ -1,0 +1,27 @@
+# list group members with Distinguished name by line
+$elements = Get-Content .\dngroupnames.txt
+ 
+#Write headers in output
+Write-Output "DN;CN;Description;Members"
+ 
+foreach($element in $elements) {
+$ldap = "(&(distinguishedName=$element))"
+#$ldap = "(&(ObjectCategory=Person)(ObjectClass=User)(distinguishedName=$element))"
+ 
+#Domain axusr.net (change to prod can be done through uncomment)
+$search = [adsisearcher]::new([adsi]"LDAP://axusr.net/DC=axusr,DC=net",$ldap)
+#$search = [adsisearcher]::new([adsi]"LDAP://prod.axponet.ch/DC=prod,DC=axponet,DC=ch",$ldap)
+ 
+$groups = $search.FindAll()
+ 
+foreach($group in $groups) {
+    $DN = $group.Properties['distinguishedName']
+    $CN = $group.Properties['CN']
+    $description = $group.Properties['description']
+    $members = $group.Properties['member']
+    $memberof = $user.Properties['memberOf']  	
+    foreach ($member in $members) {
+    Write-Output "$DN;$CN;$description;$member"
+   }
+}
+}
