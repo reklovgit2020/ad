@@ -1,0 +1,48 @@
+#read List of sam account names one SAM per line
+$elements = Get-Content .\sam-accountnames.txt
+ 
+#Write Header Output
+Write-Output "Mail;SAM;Manager;ManagerMail"
+ 
+#loop through each SAM account name
+foreach($element in $elements) {
+ 
+#ldap search statement
+$ldap = "(&(ObjectCategory=Person)(ObjectClass=User)(samAccountName=$element))"
+ 
+#Check within Domain
+$search = [adsisearcher]::new([adsi]"LDAP://lorem/DC=ipsum,DC=net",$ldap)
+ 
+#execute search
+$users = $search.FindAll()
+ 
+#loop through each result entry
+foreach($user in $users) {
+ 
+    #define variables for relevant attributes
+    $DN = $user.Properties['distinguishedName']
+    $CN = $user.Properties['CN']
+    $DisplayName = $user.Properties['DisplayName']
+    $SamAccountName = $user.Properties['SamAccountName']
+	$dep = $user.Properties['department']
+    $mail = $user.Properties['mail']
+    $lineManager = $user.Properties['manager']
+ 
+    #prepare second statement to search LineManager Email    	
+	$ldap2 = "(&(ObjectCategory=Person)(ObjectClass=User)(distinguishedName=$lineManager))"
+ 
+    #check within domain
+    $search2 = [adsisearcher]::new([adsi]"LDAP://lorem/DC=ipsum,DC=net",$ldap2)
+ 
+    #execute search
+    $users2 = $search2.FindAll()
+ 
+    #loop through result should be only one
+    foreach($user2 in $users2) {
+       #define variable for linemanager mail attribute
+        $mail2 = $user2.Properties['mail']
+    }
+    #write result
+    Write-Output "$SamAccountName;$DisplayName;$lineManager;$mail2"    
+}
+}
