@@ -33,7 +33,7 @@ foreach($user in $users) {
     #prepare second statement to search LineManager Email    	
 	$ldap2 = "(&(ObjectCategory=Person)(ObjectClass=User)(distinguishedName=$lineManager))"
  
-    #check within axusr
+    #check within domain
     $search2 = [adsisearcher]::new([adsi]"LDAP://loremipsum/DC=loremipsum,DC=net",$ldap2)
  
     #execute search
