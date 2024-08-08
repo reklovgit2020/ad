@@ -28,13 +28,13 @@ $ADS_UF_TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION = 16777216
 $ADS_UF_NO_AUTH_DATA_REQUIRED = 33554432
 $ADS_UF_PARTIAL_SECRETS_ACCOUNT = 67108864
  
-$ldap = "(&(ObjectCategory=Person)(ObjectClass=User)(cn=svc*)(cn=*mesap*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(lastlogontimestamp<=$comparedts))"
+$ldap = "(&(ObjectCategory=Person)(ObjectClass=User)(cn=svc*)(cn=*search*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(lastlogontimestamp<=$comparedts))"
             $search = [adsisearcher]::new([adsi]"LDAP://my.addomain/DC=contoso,DC=test,DC=com",$ldap)
   #$search = [adsisearcher]::new([adsi]"LDAP://my.addomain/OU=lorem,OU=ipsum,DC=contoso,DC=net",$ldap)
 #Filter
 #(department=xxx*)
  
-#$search = [adsisearcher]"(&(ObjectCategory=Person)(ObjectClass=User)(cn=*gas*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(lastlogontimestamp<=$comparedts))"
+#$search = [adsisearcher]"(&(ObjectCategory=Person)(ObjectClass=User)(cn=*search*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(lastlogontimestamp<=$comparedts))"
  
 $users = $search.FindAll()
     Write-Output "DN;CN;SamAccountName;DisplayName;Description;Department;Company;Manager;Employee ID;Employee Number;Last logon;UAC"
